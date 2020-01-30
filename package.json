@@ -1,0 +1,47 @@
+{
+    "name": "clustercmd",
+    "version": "1.0.0",
+    "description": "Envia comando a varios servidores simultaneos",
+    "main": "src/index.ts",
+    "bin": {
+        "clustercmd": "./dist/index.js"
+    },
+    "author": "Nelio Santos",
+    "license": "UNLICENSED",
+    "dependencies": {
+        "@types/temp": "^0.8.34",
+        "commander": "^4.1.0",
+        "temp": "^0.9.1"
+    },
+    "scripts": {
+        "start": "ts-node src/index.ts",
+        "build": "tsc",
+        "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src/",
+        "check": "tsc --noEmit -p tsconfig.json",
+        "format": "prettier --write src/**/*.ts src/**/*.tsx src/**/*.css package.json"
+    },
+    "devDependencies": {
+        "@types/node": "^13.5.1",
+        "@typescript-eslint/eslint-plugin": "^2.18.0",
+        "@typescript-eslint/parser": "^2.18.0",
+        "eslint": "^6.8.0",
+        "eslint-config-airbnb-base": "^14.0.0",
+        "eslint-plugin-import": "^2.20.0",
+        "husky": "^4.2.1",
+        "lint-staged": "^10.0.4",
+        "prettier": "^1.19.1",
+        "ts-node": "^8.6.2",
+        "typescript": "^3.7.5"
+    },
+    "husky": {
+        "hooks": {
+            "precommit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.ts": [
+            "prettier --write",
+            "eslint --fix"
+        ]
+    }
+}
