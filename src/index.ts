@@ -3,6 +3,7 @@
 import program from 'commander';
 import { clusterConfig, MachineConfig } from './config';
 import { spawn } from 'child_process';
+import { existsSync, readFileSync } from 'fs';
 
 const bufferSize = process.env.BUFFER_SIZE || '50000';
 
@@ -69,6 +70,25 @@ const executeCmd = (machine: MachineConfig, command: string) => {
     });
 };
 
+const readScript = (file: string): string => {
+    if (existsSync(file)) {
+        return readFileSync(file).toString();
+    }
+    console.error(`File ${file} not found!`);
+    return '\n';
+};
+
+const executeAll = (cmd: string) => {
+    console.log('Cluster Execution:', cmd.split('\n'));
+    const nodesToRun = clusterConfig.machine.filter(
+        m => program.tag === undefined || m.tags.includes(program.tag)
+    );
+    const allPromises = nodesToRun.map(m => executeCmd(m, cmd));
+    Promise.all(allPromises).then(allLogs =>
+        allLogs.forEach(log => console.log(log))
+    );
+};
+
 program
     .helpOption('-h, --help', 'show options')
     .option('--no-trunc', 'no truncate lines')
@@ -77,15 +97,15 @@ program
         console.log('Servidores encontrados:', clusterConfig.machine);
     });
 
-program.command('*').action(async (env, others) => {
-    console.log('Cluster Execution:', others.join(' '));
-    const nodesToRun = clusterConfig.machine.filter(
-        m => program.tag === undefined || m.tags.includes(program.tag)
-    );
-    const allPromises = nodesToRun.map(m => executeCmd(m, others.join(' ')));
-    Promise.all(allPromises).then(allLogs =>
-        allLogs.forEach(log => console.log(log))
-    );
+program.command('exec-script <script>').action((env, others) => {
+    executeAll(readScript(env));
 });
+
+program
+    .command('*')
+    .alias('exec-command')
+    .action((env, others) => {
+        executeAll(others.join(' '));
+    });
 
 program.parse(process.argv);

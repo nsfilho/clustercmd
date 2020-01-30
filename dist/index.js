@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const commander_1 = __importDefault(require("commander"));
 const config_1 = require("./config");
 const child_process_1 = require("child_process");
+const fs_1 = require("fs");
 const bufferSize = process.env.BUFFER_SIZE || '50000';
 const executeCmd = (machine, command) => {
     return new Promise((resolve, reject) => {
@@ -58,6 +59,19 @@ const executeCmd = (machine, command) => {
         shellCmd.stdin.end();
     });
 };
+const readScript = (file) => {
+    if (fs_1.existsSync(file)) {
+        return fs_1.readFileSync(file).toString();
+    }
+    console.error(`File ${file} not found!`);
+    return '\n';
+};
+const executeAll = (cmd) => {
+    console.log('Cluster Execution:', cmd.split('\n'));
+    const nodesToRun = config_1.clusterConfig.machine.filter(m => commander_1.default.tag === undefined || m.tags.includes(commander_1.default.tag));
+    const allPromises = nodesToRun.map(m => executeCmd(m, cmd));
+    Promise.all(allPromises).then(allLogs => allLogs.forEach(log => console.log(log)));
+};
 commander_1.default
     .helpOption('-h, --help', 'show options')
     .option('--no-trunc', 'no truncate lines')
@@ -65,10 +79,13 @@ commander_1.default
     .option('-l, --list', 'list all nodes in cluster', () => {
     console.log('Servidores encontrados:', config_1.clusterConfig.machine);
 });
-commander_1.default.command('*').action(async (env, others) => {
-    console.log('Cluster Execution:', others.join(' '));
-    const nodesToRun = config_1.clusterConfig.machine.filter(m => commander_1.default.tag === undefined || m.tags.includes(commander_1.default.tag));
-    const allPromises = nodesToRun.map(m => executeCmd(m, others.join(' ')));
-    Promise.all(allPromises).then(allLogs => allLogs.forEach(log => console.log(log)));
+commander_1.default.command('exec-script <script>').action((env, others) => {
+    executeAll(readScript(env));
+});
+commander_1.default
+    .command('*')
+    .alias('exec-command')
+    .action((env, others) => {
+    executeAll(others.join(' '));
 });
 commander_1.default.parse(process.argv);

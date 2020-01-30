@@ -1,6 +1,6 @@
 {
     "name": "clustercmd",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Envia comando a varios servidores simultaneos",
     "main": "src/index.ts",
     "bin": "./dist/index.js",
@@ -33,7 +33,7 @@
     },
     "husky": {
         "hooks": {
-            "precommit": "lint-staged"
+            "precommit": "yarn build && lint-staged"
         }
     },
     "lint-staged": {
