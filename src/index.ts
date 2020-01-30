@@ -14,16 +14,15 @@ interface ShellConfig {
 
 const executeCmd = (machine: MachineConfig, command: string) => {
     return new Promise((resolve, reject) => {
+        const prefixA = `${machine.shortName}: `;
+        const prefixB = `\n${machine.shortName}> `;
+        const sizeLine = process.stdout.columns - prefixA.length - 1;
         let dataOut = '';
         const filterData = (data: string) =>
             data
                 // .replace(/(\r|\n)$/, '')
                 .split('\n')
                 .map(v => {
-                    const prefixA = `${machine.shortName}: `;
-                    const prefixB = `\n${machine.shortName}> `;
-                    const sizeLine =
-                        process.stdout.columns - prefixA.length - 1;
                     const totalLines = Math.ceil(v.length / sizeLine);
                     let result = '';
                     for (
