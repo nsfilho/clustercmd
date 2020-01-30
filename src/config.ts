@@ -9,6 +9,8 @@ export interface MachineConfig {
     port: number;
     user: string;
     local: boolean;
+    shortName: string;
+    tags: string[];
 }
 
 export interface ClusterConfig {

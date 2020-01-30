@@ -3,9 +3,7 @@
     "version": "1.0.0",
     "description": "Envia comando a varios servidores simultaneos",
     "main": "src/index.ts",
-    "bin": {
-        "clustercmd": "./dist/index.js"
-    },
+    "bin": "./dist/index.js",
     "author": "Nelio Santos",
     "license": "UNLICENSED",
     "dependencies": {
