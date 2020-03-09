@@ -7,9 +7,7 @@
     "author": "Nelio Santos",
     "license": "UNLICENSED",
     "dependencies": {
-        "@types/temp": "^0.8.34",
-        "commander": "^4.1.0",
-        "temp": "^0.9.1"
+        "commander": "^4.1.0"
     },
     "scripts": {
         "start": "ts-node src/index.ts",

@@ -11,14 +11,14 @@ const fs_1 = require("fs");
 const bufferSize = process.env.BUFFER_SIZE || '50000';
 const executeCmd = (machine, command) => {
     return new Promise((resolve, reject) => {
+        const prefixA = `${machine.shortName}: `;
+        const prefixB = `\n${machine.shortName}> `;
+        const sizeLine = process.stdout.columns - prefixA.length - 1;
         let dataOut = '';
         const filterData = (data) => data
             // .replace(/(\r|\n)$/, '')
             .split('\n')
             .map(v => {
-            const prefixA = `${machine.shortName}: `;
-            const prefixB = `\n${machine.shortName}> `;
-            const sizeLine = process.stdout.columns - prefixA.length - 1;
             const totalLines = Math.ceil(v.length / sizeLine);
             let result = '';
             for (let x = 0; (x < totalLines && !commander_1.default.trunc) || x === 0; x++) {
